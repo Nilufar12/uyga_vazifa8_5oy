@@ -52,7 +52,7 @@ async def delete_category(category_id: int, db: AsyncSession) -> dict:
 
 
 #-----news
-async def create_news(news: NewsCreate, db: AsyncSession, image: UploadFile = None, video: UploadFile = None) -> NewsResponse:
+async def create_news(news: NewsCreate, db: AsyncSession, image: UploadFile = None, video: UploadFile = None, document: UploadFile = None) -> NewsResponse:
     if image:
         image_extension = image.filename.lower().split('.')[-1]
         if image_extension not in ['jpg', 'png', 'bmp']:
@@ -62,6 +62,11 @@ async def create_news(news: NewsCreate, db: AsyncSession, image: UploadFile = No
         video_extension = video.filename.lower().split('.')[-1]
         if video_extension not in ["mp4", "avi"]:
             raise HTTPException(status_code=400, detail="Only 'mp3' and 'avi' files are allowed")
+
+    if document:
+        document_extension = document.filename.lower().split('.')[-1]
+    if document_extension not in ["pdf"]:
+        raise HTTPException(status_code=400, detail="Only 'pdf' files are allowed")
 
     db_news = News(**news.model_dump())
     db.add(db_news)
@@ -79,6 +84,12 @@ async def create_news(news: NewsCreate, db: AsyncSession, image: UploadFile = No
         with video_path.open('wb') as buffer:
             shutil.copyfileobj(video.file, buffer)
         db_news.video = str(video_path)
+
+    if document:
+        document_path = Path(MEDIA_DIR) / f'news_{db_news.id}_file.{document_extension}'
+        with document_path.open('wb') as buffer:
+            shutil.copyfileobj(document.file, buffer)
+        db_news.document = str(document_path)
 
     await db.commit()
     await db.refresh(db_news)

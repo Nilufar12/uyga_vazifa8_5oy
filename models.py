@@ -25,6 +25,7 @@ class News(Base):
 
     image: Mapped[Optional[str]] = mapped_column(nullable=True)
     video: Mapped[Optional[str]] = mapped_column(nullable=True)
+    document: Mapped[Optional[str]] = mapped_column(nullable=True)
 
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
 

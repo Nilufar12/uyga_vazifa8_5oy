@@ -20,6 +20,7 @@ class NewsCreate(BaseModel):
     description: str
     image: Optional[str] = None
     video: Optional[str] = None
+    document: Optional[str] = None
 
     category_id: int
 

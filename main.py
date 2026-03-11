@@ -57,10 +57,11 @@ async def news_create_endpoint(
         category_id: int = Form(...),
         db: AsyncSession = Depends(get_db),
         image: UploadFile = None,
-        video: UploadFile = None
+        video: UploadFile = None,
+        document: UploadFile = None
 ):
     news = NewsCreate(title=title, description=description,views=views, category_id=category_id)
-    return await create_news(news, db, image, video)
+    return await create_news(news, db, image, video, document)
 
 
 @app.get('/news/', response_model=list[NewsResponse])
